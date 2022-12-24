@@ -13,7 +13,7 @@ const discordAuth = process.env.DISCORD_AUTH;
 const debug_gid = process.env.DEBUG_GUILD_ID;
 const debug_chid = process.env.DEBUG_CHANNEL_ID;
 
-const client = new Client({intents: ["GUILDS", "GUILD_MESSAGES"]});
+const client = new Client({intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_SCHEDULED_EVENTS"]});
 client.commands = new Collection();
 const commandsPath = './commands';
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.mjs'));
