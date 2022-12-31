@@ -12,16 +12,26 @@ export const data = new SlashCommandBuilder()
   );
 
 function prettify(evalOutput) {
-  const rollsNew = evalOutput.value.postDiscard.join(", ");
-  const sumNew = evalOutput.value.postDiscard.reduce((a, b) => a + b);
-  const rollsOld = evalOutput.value.preDiscard.join(", ");
-  const sumOld = evalOutput.value.preDiscard.reduce((a, b) => a + b);
-  let same = rollsNew.length === rollsOld.length;
-  if (!same) {
-    return `Rolls: ${rollsNew} (sum ${sumNew}). Old rolls were: ${rollsOld} (sum ${sumOld})`;
-  } else {
-    return `Rolls: ${rollsNew} (sum ${sumNew})`;
+  console.log("evalOutput: " + JSON.stringify(evalOutput));
+  if (
+    !evalOutput.consumed ||
+    !(evalOutput.offset == evalOutput.input.source.length)
+  ) {
+    return "Syntax error in your command around index " + evalOutput.offset;
   }
+  if (isNaN(evalOutput.value)) {
+    const rollsNew = evalOutput.value.postDiscard.join(", ");
+    const sumNew = evalOutput.value.postDiscard.reduce((a, b) => a + b);
+    const rollsOld = evalOutput.value.preDiscard.join(", ");
+    const sumOld = evalOutput.value.preDiscard.reduce((a, b) => a + b);
+    let same = rollsNew.length === rollsOld.length;
+    if (!same) {
+      return `Rolls: ${rollsNew} (sum ${sumNew}). Old rolls were: ${rollsOld} (sum ${sumOld})`;
+    } else {
+      return `Rolls: ${rollsNew} (sum ${sumNew})`;
+    }
+  }
+  return evalOutput.value;
 }
 
 export async function execute(interaction) {
