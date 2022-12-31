@@ -36,13 +36,11 @@ function prettify(evalOutput) {
 
 export async function execute(interaction) {
   const dice = await interaction.options.getString("dice");
-  /**
-   * @todo parse dice
-   */
+
   await interaction.reply({
     content: dice
       ? `${prettify(evalroll(dice))}. Your command was ${dice}.`
       : "empty",
-    ephemeral: true,
+    ephemeral: false, // set to false so everyone can see result
   });
 }
