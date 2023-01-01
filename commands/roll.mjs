@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import evalroll from "../lib/evalroll.mjs";
+import { runAdvanced } from "../lib/roll/ui.mjs";
 
 export const data = new SlashCommandBuilder()
   .setName("roll")
@@ -11,36 +11,13 @@ export const data = new SlashCommandBuilder()
       .setRequired(true)
   );
 
-function prettify(evalOutput) {
-  console.log("evalOutput: " + JSON.stringify(evalOutput));
-  if (
-    !evalOutput.consumed ||
-    !(evalOutput.offset == evalOutput.input.source.length)
-  ) {
-    return "Syntax error in your command around index " + evalOutput.offset;
-  }
-  if (isNaN(evalOutput.value)) {
-    const rollsNew = evalOutput.value.postDiscard.join(", ");
-    const sumNew = evalOutput.value.postDiscard.reduce((a, b) => a + b);
-    const rollsOld = evalOutput.value.preDiscard.join(", ");
-    const sumOld = evalOutput.value.preDiscard.reduce((a, b) => a + b);
-    let same = rollsNew.length === rollsOld.length;
-    if (!same) {
-      return `Rolls: ${rollsNew} (sum ${sumNew}). Old rolls were: ${rollsOld} (sum ${sumOld})`;
-    } else {
-      return `Rolls: ${rollsNew} (sum ${sumNew})`;
-    }
-  }
-  return evalOutput.value;
-}
-
 export async function execute(interaction) {
-  const dice = await interaction.options.getString("dice");
+  const dice = (await interaction.options.getString("dice")) ?? "";
+
+  const { message, error } = runAdvanced(dice);
 
   await interaction.reply({
-    content: dice
-      ? `${prettify(evalroll(dice))}. Your command was ${dice}.`
-      : "empty",
-    ephemeral: false, // set to false so everyone can see result
+    content: message,
+    ephemeral: error, // set to false for valid commands so everyone can see result
   });
 }
