@@ -16,6 +16,8 @@ export async function execute(interaction) {
 
   const { message, error } = runAdvanced(dice);
 
+  console.log("responding with... " + message);
+
   await interaction.reply({
     content: message,
     ephemeral: error, // set to false for valid commands so everyone can see result
