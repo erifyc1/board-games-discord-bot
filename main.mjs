@@ -97,7 +97,9 @@ client.on('interactionCreate', async interaction => {
     else if (interaction.isModalSubmit()) {
         try {
             switch (interaction.customId) {
-                case 'ex':
+                case 'rollmodal':
+                    client.commands.get('roll').modalSubmit(interaction);
+                    break;
                 default:
                     return;
             }
