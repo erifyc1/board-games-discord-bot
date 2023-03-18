@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import client from "../client.mjs";
 
 const GAMES = ["Two Rooms and a Boom", "Blood on the Clocktower"];
 const BOT_NAME = "BGB";
@@ -7,11 +8,12 @@ const EVENT_NAME = "Board Games";
 
 function nextAt(day, time, is_am) {
   let now = new Date();
-  while (now.getDay() != day) {
+  let i = 0;
+  while (now.getDay() != day || (day != 5 && i == 0)) {
     now = new Date(new Date(now).getTime() + 60 * 60 * 24 * 1000);
+    i++;
   }
   const hours = time + (!is_am ? 12 : 0);
-  console.log(hours);
   return new Date(now.setHours(time + (!is_am ? 12 : 0), 0, 0, 0));
 }
 
@@ -75,21 +77,26 @@ export const data = new SlashCommandBuilder()
   );
 
 export async function execute(interaction) {
+  await interaction.reply({ content: "Working...", ephemeral: true });
+  const guild = client.guilds.cache.get(interaction.guildId);
   const subcommand = interaction.options.getSubcommand();
   if (subcommand == "delete") {
     const nextEvent = await getNextBoardGamesEventIfExists(interaction.guild);
     if (nextEvent) {
-      await interaction.guild.scheduledEvents.delete(nextEvent);
-      await interaction.reply({ content: "Event deleted!", ephemeral: true });
+      await guild.scheduledEvents.delete(nextEvent);
+      await interaction.editReply({
+        content: "Event deleted!",
+        ephemeral: true,
+      });
     } else {
-      await interaction.reply({
+      await interaction.editReply({
         content: "No event to delete!",
         ephemeral: true,
       });
     }
     return;
   } else {
-    const nextEvent = await getNextBoardGamesEventIfExists(interaction.guild);
+    const nextEvent = await getNextBoardGamesEventIfExists(guild);
     const gameChoice = interaction.options.getString("game");
     let eventDescription =
       "We aren't sure what we will be playing yet, but will update this event when we decide!";
@@ -108,11 +115,17 @@ export async function execute(interaction) {
       },
     };
     if (nextEvent) {
-      await interaction.guild.scheduledEvents.edit(nextEvent, newMetadata);
-      await interaction.reply({ content: "Updated event!", ephemeral: true });
+      await guild.scheduledEvents.edit(nextEvent, newMetadata);
+      await interaction.editReply({
+        content: "Updated event!",
+        ephemeral: true,
+      });
     } else {
-      await interaction.reply("Scheduled board games event!"); // ephemeral breaks this...
-      await interaction.guild.scheduledEvents.create(newMetadata);
+      await guild.scheduledEvents.create(newMetadata);
+      await interaction.editReply({
+        content: "Scheduled board games event!",
+        ephemeral: true,
+      });
     }
   }
 }
