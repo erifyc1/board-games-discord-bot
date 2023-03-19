@@ -77,7 +77,7 @@ export const data = new SlashCommandBuilder()
   );
 
 export async function execute(interaction) {
-  await interaction.reply({ content: "Working...", ephemeral: true });
+  await interaction.deferReply({ ephemeral: true });
   const guild = client.guilds.cache.get(interaction.guildId);
   const subcommand = interaction.options.getSubcommand();
   if (subcommand == "delete") {
