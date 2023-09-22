@@ -20,8 +20,10 @@ const directions = "\n\n\n\n\n\n\n\n\n \
 1.Come to Octave Apartments\n \
 \t(210 S 4th St, Champaign, IL 61820)\n \
 2.Go to building 2 (the one with the garage)\n \
-3.Head up to the 3rd floor\n \
-4.Find your way to the large study room (aka the disclosed location)";
+3.Enter through the door left of the garage\n \
+\t(if the door is locked, message in the server) \n \
+4.Head up to the 3rd floor, use the elevator to avoid locked doors\n \
+5.Find your way to the large study room (aka the disclosed location)";
 
 function nextAt(day, time, is_am) {
   let now = new Date();
