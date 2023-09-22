@@ -95,6 +95,16 @@ export const data = new SlashCommandBuilder()
 
 export async function execute(interaction) {
   await interaction.deferReply({ ephemeral: true });
+  const roleId = '1154649567241965660';
+  const roleIdDev = '1154646498810798141';
+  if (!interaction.member.roles.cache.has(roleId) && !interaction.member.roles.cache.has(roleIdDev)) {
+    await interaction.editReply({
+      content: "You do not have permission to use this command!",
+      ephemeral: true,
+    });
+    return;
+  }
+
   const guild = client.guilds.cache.get(interaction.guildId);
   const subcommand = interaction.options.getSubcommand();
   if (subcommand == "delete") {
