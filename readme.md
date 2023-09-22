@@ -1,1 +1,4 @@
 # BGB
+
+Dev:
+`npm start`
